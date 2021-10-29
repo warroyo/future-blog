@@ -46,3 +46,7 @@ rules:
     resources:
     - '*'
 ```
+
+## GitOps
+
+It's worth noting that if you are using some type of gitops controller like Flux, Argo or Kapp you could have that overwite this webhook using the same config documented above and not worry about doing this per cluster. 
