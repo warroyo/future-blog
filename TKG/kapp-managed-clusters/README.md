@@ -40,5 +40,7 @@ This will generate the cluster yaml and then send it to kapp which will handle t
 Thanks to some of my coworkers who have done some great work using TKG and Kapp. This is possible due to their work and they did the heavy lifting on Kapp configuration used here. 
 
 [Brian Durden](https://github.com/bcdurden)
+
 [Conzetti Finocchiaro](https://github.com/conzetti)
+
 [Robert Van Vorhees](https://github.com/voor)
