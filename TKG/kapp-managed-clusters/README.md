@@ -2,6 +2,17 @@
 
 While using TKG  you may want to update settings for a cluster after the initial creation. The Tanzu CLI does not have a way to do this easily today. The Tanzu CLI does have a `--dry-run` option that will output all of the yaml that gets applied to a cluster after running it through the necessary ytt overlays etc. The challenge with this however is that there are a number of immutable fields that Cluster Api has and also injects new immutable fields into the spec after the yaml is applied. This is problematic because when you generate the yaml and apply it to try and make an update some will resource updates will fail due to immutable fields changing. There has been some fantastic work done by the folks listed below around deploying clusters with GitOps and using the [kapp](https://carvel.dev/kapp/) that solves these problems. The reason for creating this doc is to show how to avoid the above mentioned issues and give the ability to update clusters easily using the Tanzu CLI for those who have not gone down the full GitOps route and would like to use a cli to push updates but still be able to do it in a declarative way. The real magic here is all in how Kapp works. This will even allow for updates to things like machinetemplates which are immutable by using the [kapp versioned resources feature](https://carvel.dev/kapp/docs/v0.45.0/diff/#versioned-resources). 
 
+
+## Demo
+
+this video shows vertically scaling the control plane machines and hwo kapp handles versioned resources to make this really easy.
+
+
+
+https://user-images.githubusercontent.com/616621/163892454-e1ccc39e-4a14-4515-890b-cf6fc7b6c053.mp4
+
+
+
 ## Usage
 
 
