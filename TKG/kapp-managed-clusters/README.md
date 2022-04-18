@@ -35,6 +35,15 @@ tanzu cluster create <cluster-name> -f <cluster-config-yaml> --dry-run | kapp de
 
 This will generate the cluster yaml and then send it to kapp which will handle the apply to the cluster using a customized set of rules to handle any issues with immutable objects etc. This same command can now be used for cluster creates as well as updates since this is declarative.
 
+
+### Deleting Clusters
+
+In order to clean up all of the resources properly you should use kapp for the delete as well.
+
+`kapp list` -  this will show all clusters that are managed
+
+`kapp delete -a <cluster-name>` - this will output all of the resources and prompt for deletion
+
 ## Special Thanks
 
 Thanks to some of my coworkers who have done some great work using TKG and Kapp. This is possible due to their work and they did the heavy lifting on Kapp configuration used here. 
