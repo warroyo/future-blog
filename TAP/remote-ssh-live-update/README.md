@@ -11,7 +11,7 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
 ## Prerequisites
 
 * VSCode on your local workstation
-* [Tanzu Vscode plugin](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-vscode-extension-install.html) installed on local workstation(see configuration below)
+* [Tanzu Vscode plugin](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-vscode-extension-install.html) installed and enabled on the remote ssh setup. See the section below on enabling the plugin on the remote host
 * TAP running on a k8s cluster
 * A developer namespace setup in TAP
 * a linux host
@@ -24,7 +24,7 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
 `cmd + shift + p`(mac) or `ctrl+ shift + p`(windows) and search for ssh. 
 
 
-![](images/2022-04-19-13-11-57.png)
+![](images/2022-04-19-13-11-57.png )
 
 
 paste in the ssh command to access your instance, here is an example. be sure to have your private key setup properly.
@@ -34,6 +34,7 @@ ssh -i ~/.ssh/mykey.pem ubuntu@ec2-18-226-149-123.us-west-2.compute.amazonaws.co
 ```
 
 It should prompt you to store the config and then you can connect to the host.
+
 
 
 ## Setup a sample app
@@ -54,6 +55,15 @@ A new window will open that is connected to the remote host. Now we need to open
 
 ![](images/2022-04-19-15-21-46.png)
 
+## Enable the Tanzu plugin on the remote host
+
+With VSCode plugins they are installed locally initially and need to be synced to the remote host.
+
+On the remote VSCode session click on the extension tab on the left hand side of the VSCode window. You will see extensions installed locall and also on the remote host. Most likely there will be no extensions on the remote tab. click the button that looks like a cloud with an arrow to sync the extensions to the remote host. see the image below.
+
+![](images/2022-04-19-17-46-46.png)
+
+After clicking the cloud/arrow button it will ask which extensions you would like to sync. choose the tanzu extension.
 
 ### Clone down the sample app and open it in VSCode
 
