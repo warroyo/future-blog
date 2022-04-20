@@ -32,7 +32,7 @@ export the kubeconfig and ensure you can connect `kubectl get nodes`
 
 
 
-## Get rid of the lingerng duplicate cluster
+## 2. Get rid of the lingerng duplicate cluster
 
 since there is a duplicate cluster that is trying to be deleted and can't due to some resources being unable to cleanup since they are in use we need to stop the conclficting reconciliation process. Edit the duplicate aws cluster object and remove the `finalizers`
 
@@ -43,7 +43,7 @@ it should be deleted shirtly after
 `kubectl get clusters` to verify it's gone
 
 
-## Make at least one node `Ready`
+## 2. Make at least one node `Ready`
 
 right now all endpoints are down due to nodes not being ready. this is problematic for coredns adn antrea in particular. let's get one control plane node back healthy.
 
@@ -73,7 +73,7 @@ tail the capa logs to see the load balancer start to reconcile
 `kubectl logs -f -n capa-system deployments.apps/capa-controller-manager`
 
 
-## Update the control plane nodes with new LB settings
+## 4. Update the control plane nodes with new LB settings
 
 To be safe we will do this on all CP nodes rather than having them recreate. follow these steps for each CP node.
 
@@ -121,7 +121,7 @@ restart the kubelet
 
 just as we did before we need new pods to pick up api server cache changes so  you will want to force restart pods like antrea, kube-proxy, core-dns , etc.
 
-## Update capi settings for new LB DNS name
+## 5. Update capi settings for new LB DNS name
 
 Update the control plane endpoint on the `awscluster` and `cluster` objects. To do this we need to disable the validatingwebhooks.we will back them up and then delete so we can apply later.
 
@@ -151,7 +151,7 @@ edit the cluster kubeconfig secret that capi uses to talk to the mgmt cluster. y
 at this point things should start to reconcile on thier own, but we can use the commands in the next step to force it. 
 
 
-## Roll all of the nodes to make sure everything is fresh
+## 6. Roll all of the nodes to make sure everything is fresh
 
 1. `kubectl patch kcp <clusternamekcp> -n namespace --type merge -p "{\"spec\":{\"rolloutAfter\":\"`date +'%Y-%m-%dT%TZ'`\"}}"`
    
