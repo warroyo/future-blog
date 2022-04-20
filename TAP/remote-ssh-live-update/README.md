@@ -49,7 +49,7 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
 `cmd + shift + p`(mac) or `ctrl+ shift + p`(windows) and search for ssh. 
 
 
-![](images/2022-04-19-13-11-57.png )
+<img src="images/2022-04-19-13-11-57.png" alt="drawing" width="350"/>
 
 
 paste in the ssh command to access your instance, here is an example. be sure to have your private key setup properly.
