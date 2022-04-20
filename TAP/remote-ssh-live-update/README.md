@@ -70,15 +70,15 @@ docs [here](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-v
 
 In the bottom left hand corner of VSCode click the little green button
 
-![](images/2022-04-19-15-19-57.png)
+<img src="images/2022-04-19-15-19-57.png" alt="drawing" width="200"/>
 
 Then choose connect to host and pick your host with the tooling installed on it.
 
-![](images/2022-04-19-15-20-26.png)
+<img src="images/2022-04-19-15-20-26.png" alt="drawing" width="600"/>
 
 A new window will open that is connected to the remote host. Now we need to open a terminal.Choose View->Terminal
 
-![](images/2022-04-19-15-21-46.png)
+<img src="images/2022-04-19-15-21-46.png" alt="drawing" width="150"/>
 
 ##  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
 
@@ -86,7 +86,7 @@ With VSCode plugins they are installed locally initially and need to be synced t
 
 On the remote VSCode session click on the extension tab on the left hand side of the VSCode window. You will see extensions installed locally and also on the remote host. Most likely there will be no extensions on the remote tab which has a header of the machine name you are connected to. Click the button that looks like a cloud with an arrow to sync the extensions to the remote host. see the image below.
 
-![](images/2022-04-19-17-46-46.png)
+<img src="images/2022-04-19-17-46-46.png" alt="drawing" width="250"/>
 
 After clicking the cloud/arrow button it will ask which extensions you would like to sync. choose the tanzu extension.
 
@@ -150,7 +150,7 @@ First we need to login to the registry from the remote host. From the terminal r
 Right click on your tilt file and click "Tanzu: Live Update Start"
 
 
-![](images/2022-04-19-15-50-20.png)
+<img src="images/2022-04-19-15-50-20.png" alt="drawing" width="250"/>
 
 
 this should trigger a terminal to open and the image build process as well as deploy to happen. You can now edit files and see the live reload take affect.
@@ -160,7 +160,8 @@ this should trigger a terminal to open and the image build process as well as de
 
 VSCode will automatically forward  ports that it finds running on the remote host after you start a process. This is helpful becuase you can now visit your app and the Tilt UI from your local workstation while the app is running a remote k8s cluster and being deployed from a bastion host. From the VSCode UI click on the port tab next to terminal and you will see the tilt port forwarded. if you do not see a port for you app you can just click add port and type in the port number, for the sample app this is port 8080. visit this on your local workstation browser to see your app.
 
-![](images/2022-04-19-15-54-13.png)
+<img src="images/2022-04-19-15-54-13.png" alt="drawing" width="350"/>
+
 
 
 ##  5. <a name='DeployingaDotNetappwithliveupdates'></a>Deploying a DotNet app with live updates
