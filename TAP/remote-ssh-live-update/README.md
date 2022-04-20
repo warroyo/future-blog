@@ -80,7 +80,7 @@ A new window will open that is connected to the remote host. Now we need to open
 
 <img src="images/2022-04-19-15-21-46.png" alt="drawing" width="200"/>
 
-##  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
+###  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
 
 With VSCode plugins they are installed locally initially and need to be synced to the remote host.
 
