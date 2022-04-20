@@ -74,11 +74,11 @@ In the bottom left hand corner of VSCode click the little green button
 
 Then choose connect to host and pick your host with the tooling installed on it.
 
-<img src="images/2022-04-19-15-20-26.png" alt="drawing" width="600"/>
+<img src="images/2022-04-19-15-20-26.png" alt="drawing" width="450"/>
 
 A new window will open that is connected to the remote host. Now we need to open a terminal.Choose View->Terminal
 
-<img src="images/2022-04-19-15-21-46.png" alt="drawing" width="150"/>
+<img src="images/2022-04-19-15-21-46.png" alt="drawing" width="200"/>
 
 ##  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
 
