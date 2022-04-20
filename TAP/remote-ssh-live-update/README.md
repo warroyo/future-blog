@@ -1,3 +1,14 @@
+# Using Live Update with VSCode Remote SSH
+
+VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) that allows you to connect to a host over ssh and use the IDE while connecting to remote directories and has an integrated terminal and port forwarding. This doc walks through using this extension along with the Tanzu VSCode extension to get live reloads of your app running on TAP while iterating on code and using a remote host that has all of the tools installed. Here are some scenarios this may be useful.
+
+* Environments where a Bastion host is required
+* Workshops
+* Decoupling your workstation from dev tooling
+* Consistent and ephemeral jumpboxes for Devs
+
+
+# Contents
 <!-- vscode-markdown-toc -->
 * 1. [Prerequisites](#Prerequisites)
 * 2. [Setup your remote host in VSCode](#SetupyourremotehostinVSCode)
@@ -18,17 +29,9 @@
 	numbering=true
 	autoSave=true
 	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc --># Using Live Update with VSCode Remote SSH
+<!-- /vscode-markdown-toc -->
 
-VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) that allows you to connect to a host over ssh and use the IDE while connecting to remote directories and has an integrated terminal and port forwarding. This doc walks through using this extension along with the Tanzu VSCode extension to get live reloads of your app running on TAP while iterating on code and using a remote host that has all of the tools installed. Here are some scenarios this may be useful.
-
-* Environments where a Bastion host is required
-* Workshops
-* Decoupling your workstation from dev tooling
-* Consistent and ephemeral jumpboxes for Devs
-
-
-
+#
 
 ##  1. <a name='Prerequisites'></a>Prerequisites
 
