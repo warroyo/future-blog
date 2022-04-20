@@ -1,4 +1,24 @@
-# Using Live Update with VSCode Remote SSH
+<!-- vscode-markdown-toc -->
+* 1. [Prerequisites](#Prerequisites)
+* 2. [Setup your remote host in VSCode](#SetupyourremotehostinVSCode)
+* 3. [Setup a sample app](#Setupasampleapp)
+	* 3.1. [Connect to your remote host](#Connecttoyourremotehost)
+* 4. [Enable the Tanzu extension on the remote host](#EnabletheTanzuextensionontheremotehost)
+	* 4.1. [Configure the Tanzu plugin](#ConfiguretheTanzuplugin)
+	* 4.2. [Clone down the sample app and open it in VSCode](#ClonedownthesampleappandopenitinVSCode)
+	* 4.3. [Edit the tilt file that comes with the sample](#Editthetiltfilethatcomeswiththesample)
+	* 4.4. [Deploy using live update](#Deployusingliveupdate)
+	* 4.5. [Visit your app and tilt UI](#VisityourappandtiltUI)
+* 5. [Deploying a DotNet app with live updates](#DeployingaDotNetappwithliveupdates)
+	* 5.1. [Clone down the sample DotNet app and open it in VSCode](#ClonedownthesampleDotNetappandopenitinVSCode)
+	* 5.2. [Create a tilt file for sample DotNet app](#CreateatiltfileforsampleDotNetapp)
+	* 5.3. [Create a workload yaml file for sample DotNet app](#CreateaworkloadyamlfileforsampleDotNetapp)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc --># Using Live Update with VSCode Remote SSH
 
 VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) that allows you to connect to a host over ssh and use the IDE while connecting to remote directories and has an integrated terminal and port forwarding. This doc walks through using this extension along with the Tanzu VSCode extension to get live reloads of your app running on TAP while iterating on code and using a remote host that has all of the tools installed. Here are some scenarios this may be useful.
 
@@ -8,7 +28,9 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
 * Consistent and ephemeral jumpboxes for Devs
 
 
-## Prerequisites
+
+
+##  1. <a name='Prerequisites'></a>Prerequisites
 
 * VSCode on your local workstation
 * [Tanzu Vscode plugin](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-vscode-extension-install.html) installed and enabled on the remote ssh setup. See the section below on enabling the plugin on the remote host
@@ -18,7 +40,7 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
   * [tanzu cli and plugins](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-install-tanzu-cli.html#cli-and-plugin) installed on linux host
   * [Tilt](https://docs.tilt.dev/install.html) installed on linux host
 
-## Setup your remote host in VSCode
+##  2. <a name='SetupyourremotehostinVSCode'></a>Setup your remote host in VSCode
 
 
 `cmd + shift + p`(mac) or `ctrl+ shift + p`(windows) and search for ssh. 
@@ -37,11 +59,11 @@ It should prompt you to store the config and then you can connect to the host.
 
 
 
-## Setup a sample app
+##  3. <a name='Setupasampleapp'></a>Setup a sample app
 
 docs [here](https://docs.vmware.com/en/Tanzu-Application-Platform/1.0/tap/GUID-vscode-extension-install.html#quick-start-3) for reference.
 
-### Connect to your remote host
+###  3.1. <a name='Connecttoyourremotehost'></a>Connect to your remote host
 
 In the bottom left hand corner of VSCode click the little green button
 
@@ -55,7 +77,7 @@ A new window will open that is connected to the remote host. Now we need to open
 
 ![](images/2022-04-19-15-21-46.png)
 
-## Enable the Tanzu extension on the remote host
+##  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
 
 With VSCode plugins they are installed locally initially and need to be synced to the remote host.
 
@@ -65,7 +87,7 @@ On the remote VSCode session click on the extension tab on the left hand side of
 
 After clicking the cloud/arrow button it will ask which extensions you would like to sync. choose the tanzu extension.
 
-### Configure the Tanzu plugin
+###  4.1. <a name='ConfiguretheTanzuplugin'></a>Configure the Tanzu plugin
 
 The Tanzu plugin has some base configuration that needs to be setup. This is the global setting for where the app lives and the image you want to use. This doesn't work great for multiple apps so we will put some defaults there and override them later.
 
@@ -73,7 +95,7 @@ go to `Preferences > Settings > Extensions > Tanzu`
 
 update the `Source Image` field to be something like `your-registry.io/project/dummyapp` this does not need to exist since we will override it.
 
-### Clone down the sample app and open it in VSCode
+###  4.2. <a name='ClonedownthesampleappandopenitinVSCode'></a>Clone down the sample app and open it in VSCode
 
 
 From the above terminal run the following
@@ -90,7 +112,7 @@ code tanzu-java-web-app
 
 
 
-### Edit the tilt file that comes with the sample
+###  4.3. <a name='Editthetiltfilethatcomeswiththesample'></a>Edit the tilt file that comes with the sample
 
 The existing tilt file needs a few modifications to work.
 
@@ -117,7 +139,7 @@ LOCAL_PATH = '/home/ubuntu/tanzu-java-web-app'
 allow_k8s_contexts('mycontext@mycontext')
 ```
 
-### Deploy using live update
+###  4.4. <a name='Deployusingliveupdate'></a>Deploy using live update
 
 First we need to login to the registry from the remote host. From the terminal run `docker login yourregistry.com`
 
@@ -131,19 +153,19 @@ Right click on your tilt file and click "Tanzu: Live Update Start"
 this should trigger a terminal to open and the image build process as well as deploy to happen. You can now edit files and see the live reload take affect.
 
 
-### Visit your app and tilt UI
+###  4.5. <a name='VisityourappandtiltUI'></a>Visit your app and tilt UI
 
 VSCode will automatically forward  ports that it finds running on the remote host after you start a process. This is helpful becuase you can now visit your app and the Tilt UI from your local workstation while the app is running a remote k8s cluster and being deployed from a bastion host. From the VSCode UI click on the port tab next to terminal and you will see the tilt port forwarded. if you do not see a port for you app you can just click add port and type in the port number, for the sample app this is port 8080. visit this on your local workstation browser to see your app.
 
 ![](images/2022-04-19-15-54-13.png)
 
 
-## Deploying a DotNet app with live updates
+##  5. <a name='DeployingaDotNetappwithliveupdates'></a>Deploying a DotNet app with live updates
 
 If you have completed all of the steps above you can jump right to this section. If you want to start with DotNet be sure to complete through [Configure the Tanzu plugin](#configure-the-tanzu-plugin).
 
 
-### Clone down the sample DotNet app and open it in VSCode
+###  5.1. <a name='ClonedownthesampleDotNetappandopenitinVSCode'></a>Clone down the sample DotNet app and open it in VSCode
 
 
 From the above terminal run the following
@@ -158,7 +180,7 @@ Once this is clones down we now need to open it in VSCode. Again from the termin
 code AltPackageRepository
 ```
 
-### Create a tilt file for sample DotNet app
+###  5.2. <a name='CreateatiltfileforsampleDotNetapp'></a>Create a tilt file for sample DotNet app
 
 Copy the text below into a file called `Tiltfile` in the root of the repo. Replace the top two lines `SOURCE_IMAGE` and `LOCAL_PATH` with the correct values for your registry and the path to the app. Also you will need to update the k8s context `allow_k8s_contexts` with your context that you can get from kubectl.
 
@@ -191,7 +213,7 @@ k8s_resource(NAME, port_forwards=["8080:8080"],
 allow_k8s_contexts('context@context')
 ```
 
-### Create a workload yaml file for sample DotNet app
+###  5.3. <a name='CreateaworkloadyamlfileforsampleDotNetapp'></a>Create a workload yaml file for sample DotNet app
 
 The sample app currently has a `workload.yaml` file but it needs some modifications. Replace the `config/workload.yaml` with the below contents.
 
