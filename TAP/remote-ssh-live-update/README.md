@@ -14,16 +14,16 @@ VSCode has a nice [extension](https://marketplace.visualstudio.com/items?itemNam
 * 2. [Setup your remote host in VSCode](#SetupyourremotehostinVSCode)
 * 3. [Setup a sample app](#Setupasampleapp)
 	* 3.1. [Connect to your remote host](#Connecttoyourremotehost)
-* 4. [Enable the Tanzu extension on the remote host](#EnabletheTanzuextensionontheremotehost)
-	* 4.1. [Configure the Tanzu plugin](#ConfiguretheTanzuplugin)
-	* 4.2. [Clone down the sample app and open it in VSCode](#ClonedownthesampleappandopenitinVSCode)
-	* 4.3. [Edit the tilt file that comes with the sample](#Editthetiltfilethatcomeswiththesample)
-	* 4.4. [Deploy using live update](#Deployusingliveupdate)
-	* 4.5. [Visit your app and tilt UI](#VisityourappandtiltUI)
-* 5. [Deploying a DotNet app with live updates](#DeployingaDotNetappwithliveupdates)
-	* 5.1. [Clone down the sample DotNet app and open it in VSCode](#ClonedownthesampleDotNetappandopenitinVSCode)
-	* 5.2. [Create a tilt file for sample DotNet app](#CreateatiltfileforsampleDotNetapp)
-	* 5.3. [Create a workload yaml file for sample DotNet app](#CreateaworkloadyamlfileforsampleDotNetapp)
+	* 3.2. [Enable the Tanzu extension on the remote host](#EnabletheTanzuextensionontheremotehost)
+	* 3.3. [Configure the Tanzu plugin](#ConfiguretheTanzuplugin)
+	* 3.4. [Clone down the sample app and open it in VSCode](#ClonedownthesampleappandopenitinVSCode)
+	* 3.5. [Edit the tilt file that comes with the sample](#Editthetiltfilethatcomeswiththesample)
+	* 3.6. [Deploy using live update](#Deployusingliveupdate)
+	* 3.7. [Visit your app and tilt UI](#VisityourappandtiltUI)
+* 4. [Deploying a DotNet app with live updates](#DeployingaDotNetappwithliveupdates)
+	* 4.1. [Clone down the sample DotNet app and open it in VSCode](#ClonedownthesampleDotNetappandopenitinVSCode)
+	* 4.2. [Create a tilt file for sample DotNet app](#CreateatiltfileforsampleDotNetapp)
+	* 4.3. [Create a workload yaml file for sample DotNet app](#CreateaworkloadyamlfileforsampleDotNetapp)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -80,7 +80,7 @@ A new window will open that is connected to the remote host. Now we need to open
 
 <img src="images/2022-04-19-15-21-46.png" alt="drawing" width="200"/>
 
-###  4. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
+###  3.2. <a name='EnabletheTanzuextensionontheremotehost'></a>Enable the Tanzu extension on the remote host
 
 With VSCode plugins they are installed locally initially and need to be synced to the remote host.
 
@@ -90,7 +90,7 @@ On the remote VSCode session click on the extension tab on the left hand side of
 
 After clicking the cloud/arrow button it will ask which extensions you would like to sync. choose the tanzu extension.
 
-###  4.1. <a name='ConfiguretheTanzuplugin'></a>Configure the Tanzu plugin
+###  3.3. <a name='ConfiguretheTanzuplugin'></a>Configure the Tanzu plugin
 
 The Tanzu plugin has some base configuration that needs to be setup. This is the global setting for where the app lives and the image you want to use. This doesn't work great for multiple apps so we will put some defaults there and override them later.
 
@@ -98,7 +98,7 @@ go to `Preferences > Settings > Extensions > Tanzu`
 
 update the `Source Image` field to be something like `your-registry.io/project/dummyapp` this does not need to exist since we will override it.
 
-###  4.2. <a name='ClonedownthesampleappandopenitinVSCode'></a>Clone down the sample app and open it in VSCode
+###  3.4. <a name='ClonedownthesampleappandopenitinVSCode'></a>Clone down the sample app and open it in VSCode
 
 
 From the above terminal run the following
@@ -115,7 +115,7 @@ code tanzu-java-web-app
 
 
 
-###  4.3. <a name='Editthetiltfilethatcomeswiththesample'></a>Edit the tilt file that comes with the sample
+###  3.5. <a name='Editthetiltfilethatcomeswiththesample'></a>Edit the tilt file that comes with the sample
 
 The existing tilt file needs a few modifications to work.
 
@@ -142,7 +142,7 @@ LOCAL_PATH = '/home/ubuntu/tanzu-java-web-app'
 allow_k8s_contexts('mycontext@mycontext')
 ```
 
-###  4.4. <a name='Deployusingliveupdate'></a>Deploy using live update
+###  3.6. <a name='Deployusingliveupdate'></a>Deploy using live update
 
 First we need to login to the registry from the remote host. From the terminal run `docker login yourregistry.com`
 
@@ -156,7 +156,7 @@ Right click on your tilt file and click "Tanzu: Live Update Start"
 this should trigger a terminal to open and the image build process as well as deploy to happen. You can now edit files and see the live reload take affect.
 
 
-###  4.5. <a name='VisityourappandtiltUI'></a>Visit your app and tilt UI
+###  3.7. <a name='VisityourappandtiltUI'></a>Visit your app and tilt UI
 
 VSCode will automatically forward  ports that it finds running on the remote host after you start a process. This is helpful becuase you can now visit your app and the Tilt UI from your local workstation while the app is running a remote k8s cluster and being deployed from a bastion host. From the VSCode UI click on the port tab next to terminal and you will see the tilt port forwarded. if you do not see a port for you app you can just click add port and type in the port number, for the sample app this is port 8080. visit this on your local workstation browser to see your app.
 
@@ -164,12 +164,12 @@ VSCode will automatically forward  ports that it finds running on the remote hos
 
 
 
-##  5. <a name='DeployingaDotNetappwithliveupdates'></a>Deploying a DotNet app with live updates
+##  4. <a name='DeployingaDotNetappwithliveupdates'></a>Deploying a DotNet app with live updates
 
 If you have completed all of the steps above you can jump right to this section. If you want to start with DotNet be sure to complete through [Configure the Tanzu plugin](#configure-the-tanzu-plugin).
 
 
-###  5.1. <a name='ClonedownthesampleDotNetappandopenitinVSCode'></a>Clone down the sample DotNet app and open it in VSCode
+###  4.1. <a name='ClonedownthesampleDotNetappandopenitinVSCode'></a>Clone down the sample DotNet app and open it in VSCode
 
 
 From the above terminal run the following
@@ -184,7 +184,7 @@ Once this is clones down we now need to open it in VSCode. Again from the termin
 code AltPackageRepository
 ```
 
-###  5.2. <a name='CreateatiltfileforsampleDotNetapp'></a>Create a tilt file for sample DotNet app
+###  4.2. <a name='CreateatiltfileforsampleDotNetapp'></a>Create a tilt file for sample DotNet app
 
 Copy the text below into a file called `Tiltfile` in the root of the repo. Replace the top two lines `SOURCE_IMAGE` and `LOCAL_PATH` with the correct values for your registry and the path to the app. Also you will need to update the k8s context `allow_k8s_contexts` with your context that you can get from kubectl.
 
@@ -217,7 +217,7 @@ k8s_resource(NAME, port_forwards=["8080:8080"],
 allow_k8s_contexts('context@context')
 ```
 
-###  5.3. <a name='CreateaworkloadyamlfileforsampleDotNetapp'></a>Create a workload yaml file for sample DotNet app
+###  4.3. <a name='CreateaworkloadyamlfileforsampleDotNetapp'></a>Create a workload yaml file for sample DotNet app
 
 The sample app currently has a `workload.yaml` file but it needs some modifications. Replace the `config/workload.yaml` with the below contents.
 
