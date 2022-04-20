@@ -55,15 +55,23 @@ A new window will open that is connected to the remote host. Now we need to open
 
 ![](images/2022-04-19-15-21-46.png)
 
-## Enable the Tanzu plugin on the remote host
+## Enable the Tanzu extension on the remote host
 
 With VSCode plugins they are installed locally initially and need to be synced to the remote host.
 
-On the remote VSCode session click on the extension tab on the left hand side of the VSCode window. You will see extensions installed locall and also on the remote host. Most likely there will be no extensions on the remote tab. click the button that looks like a cloud with an arrow to sync the extensions to the remote host. see the image below.
+On the remote VSCode session click on the extension tab on the left hand side of the VSCode window. You will see extensions installed locally and also on the remote host. Most likely there will be no extensions on the remote tab which has a header of the machine name you are connected to. Click the button that looks like a cloud with an arrow to sync the extensions to the remote host. see the image below.
 
 ![](images/2022-04-19-17-46-46.png)
 
 After clicking the cloud/arrow button it will ask which extensions you would like to sync. choose the tanzu extension.
+
+### Configure the Tanzu plugin
+
+The Tanzu plugin has some base configuration that needs to be setup. This is the global setting for where the app lives and the image you want to use. This doesn't work great for multiple apps so we will put some defaults there and override them later.
+
+go to `Preferences > Settings > Extensions > Tanzu`
+
+update the `Source Image` field to be something like `your-registry.io/project/dummyapp` this does not need to exist since we will override it.
 
 ### Clone down the sample app and open it in VSCode
 
@@ -80,13 +88,6 @@ Once this is clones down we now need to open it in VSCode. Again from the termin
 code tanzu-java-web-app
 ```
 
-### Configure the Tanzu plugin
-
-The Tanzu plugin has some base configuration that needs to be setup. This is the global setting for where the app lives and the image you want to use. This doesn't work great for multiple apps so we will put some defaults there and override them later.
-
-go to `Preferences > Settings > Extensions > Tanzu`
-
-update the `Source Image` field to be something like `your-registry.io/project/tanzu-java-web-app-source` this does not need to exist since we will override it.
 
 
 ### Edit the tilt file that comes with the sample
@@ -135,3 +136,85 @@ this should trigger a terminal to open and the image build process as well as de
 VSCode will automatically forward  ports that it finds running on the remote host after you start a process. This is helpful becuase you can now visit your app and the Tilt UI from your local workstation while the app is running a remote k8s cluster and being deployed from a bastion host. From the VSCode UI click on the port tab next to terminal and you will see the tilt port forwarded. if you do not see a port for you app you can just click add port and type in the port number, for the sample app this is port 8080. visit this on your local workstation browser to see your app.
 
 ![](images/2022-04-19-15-54-13.png)
+
+
+## Deploying a DotNet app with live updates
+
+If you have completed all of the steps above you can jump right to this section. If you want to start with DotNet be sure to complete through [Configure the Tanzu plugin](#configure-the-tanzu-plugin).
+
+
+### Clone down the sample DotNet app and open it in VSCode
+
+
+From the above terminal run the following
+
+```
+git clone https://github.com/pacphi/AltPackageRepository
+```
+
+Once this is clones down we now need to open it in VSCode. Again from the terminal run below command and a new window will open to your remote session but this time it will be in the directory we need to be in for live update to work. 
+
+```bash
+code AltPackageRepository
+```
+
+### Create a tilt file for sample DotNet app
+
+Copy the text below into a file called `Tiltfile` in the root of the repo. Replace the top two lines `SOURCE_IMAGE` and `LOCAL_PATH` with the correct values for your registry and the path to the app. Also you will need to update the k8s context `allow_k8s_contexts` with your context that you can get from kubectl.
+
+
+
+```bash
+SOURCE_IMAGE = 'yourregistry.com/project/altpackagerepository'
+LOCAL_PATH = '/home/ubuntu/altpackagerepository'
+NAMESPACE = 'default'
+NAME = "altpackagerepository"
+
+
+
+k8s_custom_deploy(
+  NAME,
+  apply_cmd="tanzu apps workload apply -f ./config/workload.yaml --live-update" +
+            " --local-path " + LOCAL_PATH +
+            " --source-image " + SOURCE_IMAGE +
+            " --namespace " + NAMESPACE +
+            " --yes >/dev/null" +
+            " && kubectl get workload " + NAME + " -n " + NAMESPACE + " -o yaml",
+  delete_cmd="tanzu apps workload delete " + NAME + " -n " + NAMESPACE + " --yes",
+  deps=['./src'],
+  container_selector='workload',
+)
+
+k8s_resource(NAME, port_forwards=["8080:8080"],
+            extra_pod_selectors=[{'serving.knative.dev/service': 'altpackagerepository'}])
+
+allow_k8s_contexts('context@context')
+```
+
+### Create a workload yaml file for sample DotNet app
+
+The sample app currently has a `workload.yaml` file but it needs some modifications. Replace the `config/workload.yaml` with the below contents.
+
+```yaml
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: altpackagerepository
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: altpackagerepository
+spec:
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    git:
+      url: https://github.com/pacphi/AltPackageRepository
+      ref:
+        branch: main
+
+```
+
+
+You can now jump back to [Deploy using live update](#deploy-using-live-update)
