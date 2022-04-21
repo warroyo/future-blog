@@ -1,4 +1,4 @@
 #@data/values
 #@overlay/match-child-defaults missing_ok=True
 ---
-KAPP_MANAGED: "false"
+KAPP_MANAGED: false
