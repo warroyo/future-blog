@@ -9,117 +9,100 @@ With CAPA today it is possible to create a cluster in another namespace with the
 
 # Steps
 
+### **Access the api server locally**
 
-## 1. Access the api server locally
+1. ssh to a control plane node and modify the admin.conf
 
-ssh to a control plane node and modify the admin.conf
+    ```
+    vim /etc/kubernetes/admin.conf
+    ```
 
-```
-vim /etc/kubernetes/admin.conf
-```
+2. replace the `server` with `server: https://localhost:6443`
 
-replace the `server` with `server: https://localhost:6443`
+3. add `insecure-skip-tls-verify: true`
 
-add `insecure-skip-tls-verify: true`
+4. comment out `certificate-authority-data:`
 
-comment out `certificate-authority-data:`
+5. export the kubeconfig and ensure you can connect
 
-export the kubeconfig and ensure you can connect `kubectl get nodes`
-
-`export KUBECONFIG=/etc/kubernetes/admin.conf`
-
- `kubectl get nodes`
-
-
-
-## 2. Get rid of the lingerng duplicate cluster
-
-since there is a duplicate cluster that is trying to be deleted and can't due to some resources being unable to cleanup since they are in use we need to stop the conclficting reconciliation process. Edit the duplicate aws cluster object and remove the `finalizers`
-
-`kubectl edit awscluster <clustername>`
-
-it should be deleted shirtly after
-
-`kubectl get clusters` to verify it's gone
+    ```bash
+    export KUBECONFIG=/etc/kubernetes/admin.conf`
+    kubectl get nodes
+    ```
 
 
-## 2. Make at least one node `Ready`
+### **Get rid of the lingerng duplicate cluster**
 
-right now all endpoints are down due to nodes not being ready. this is problematic for coredns adn antrea in particular. let's get one control plane node back healthy.
+1. since there is a duplicate cluster that is trying to be deleted and can't due to some resources being unable to cleanup since they are in use we need to stop the conclficting reconciliation process. Edit the duplicate aws cluster object and remove the `finalizers`
 
-on the control plane node we logged into edit the `kubelet.conf`
-
-`vim /etc/kubernetes/kubelet.conf`
-
-replace the `server` with `server: https://localhost:6443`
-
-add `insecure-skip-tls-verify: true`
-
-comment out `certificate-authority-data:`
+    ```bash
+    kubectl edit awscluster <clustername>
+    ```
+2. `kubectl get clusters` to verify it's gone
 
 
-restart the kubelet
+### **Make at least one node `Ready`**
 
-`systemctl restart kubelet`
+1. right now all endpoints are down due to nodes not being ready. this is problematic for coredns adn antrea in particular. let's get one control plane node back healthy. on the control plane node we logged into edit the `kubelet.conf`
 
+    ```bash
+    vim /etc/kubernetes/kubelet.conf
+    ```
+2. replace the `server` with `server: https://localhost:6443`
 
-you should have a node in the `Ready` state now.
+3. add `insecure-skip-tls-verify: true`
 
+4. comment out `certificate-authority-data:`
 
-After a few minutes most things should start scheduling themselves on the new node.The pods that did not restart on their own that were causing issues were core-dns,kube-proxy, and antrea. Those should be restart manually.
+5. restart the kubelet `systemctl restart kubelet`
 
-tail the capa logs to see the load balancer start to reconcile
+6. `kubectl get nodes` and validate that the node is in a  ready state.
+7. After a few minutes most things should start scheduling themselves on the new node. The pods that did not restart on their own that were causing issues were core-dns,kube-proxy, and antrea.Those should be restart manually.
+8. (optional) tail the capa logs to see the load balancer start to reconcile
 
-`kubectl logs -f -n capa-system deployments.apps/capa-controller-manager`
+    ```bash
+    kubectl logs -f -n capa-system deployments.apps/capa-controller-manager`
+    ```
 
+### **Update the control plane nodes with new LB settings**
 
-## 4. Update the control plane nodes with new LB settings
+1. To be safe we will do this on all CP nodes rather than having them recreate to avoid potential data loss issues. Follow the following steps for **each** CP node.
 
-To be safe we will do this on all CP nodes rather than having them recreate. follow these steps for each CP node.
+2. Regenrate the certs for the api server using the new name. Make sure to update your service cidr and endpoint in the below command.
 
-make sure to update your service cidr and endpoint in the below command.Use this command to regenrate the certs for the api server using the new name. 
+    ```bash
+    rm /etc/kubernetes/pki/apiserver.crt
+    rm /etc/kubernetes/pki/apiserver.key
 
-```
-rm /etc/kubernetes/pki/apiserver.crt
-rm /etc/kubernetes/pki/apiserver.key
+    kubeadm init phase certs apiserver --control-plane-endpoint="mynewendpoint.com" --service-cidr=100.64.0.0/13 -v10
+    ```
 
-kubeadm init phase certs apiserver --control-plane-endpoint="rvzpn1iy11dda8cy7gyex082zicw-k8s-1780442051.us-west-2.elb.amazonaws.com" --service-cidr=100.64.0.0/13 -v10
-```
+3. Update settings in `/etc/kubernetes/admin.conf`
 
-update setiings admin.conf and kubelet.conf
+    * Replace the `server` with `server: https://<your-new-lb.com>:6443`
+    
+    * Remove `insecure-skip-tls-verify: true`
 
-```
-vim /etc/kubernetes/admin.conf
-```
+    * Uncomment `certificate-authority-data:`
 
-replace the `server` with `server: https://your-new-lb.com:6443`
+    * Export the kubeconfig and ensure you can connect 
 
-remove `insecure-skip-tls-verify: true`
+        ```bash
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+        kubectl get nodes
+        ```
 
-uncomment `certificate-authority-data:`
+4. Update the settings in `/etc/kubernetes/kubelet.conf`
 
-export the kubeconfig and ensure you can connect `kubectl get nodes`
+    * Replace the `server` with `server: https://your-new-lb.com:6443`
 
-`export KUBECONFIG=/etc/kubernetes/admin.conf`
+    * Remove `insecure-skip-tls-verify: true`
 
- `kubectl get nodes`
+    * Uncomment `certificate-authority-data:`
 
+    * restart the kubelet `systemctl restart kubelet`
 
-
-`vim /etc/kubernetes/kubelet.conf`
-
-replace the `server` with `server: https://your-new-lb.com:6443`
-
-remove `insecure-skip-tls-verify: true`
-
-uncomment `certificate-authority-data:`
-
-
-restart the kubelet
-
-`systemctl restart kubelet`
-
-just as we did before we need new pods to pick up api server cache changes so  you will want to force restart pods like antrea, kube-proxy, core-dns , etc.
+5. Just as we did before we need new pods to pick up api server cache changes so  you will want to force restart pods like antrea, kube-proxy, core-dns , etc.
 
 ## 5. Update capi settings for new LB DNS name
 
