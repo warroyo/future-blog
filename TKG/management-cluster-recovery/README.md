@@ -11,19 +11,15 @@ With CAPA today it is possible to create a cluster in another namespace with the
 
 ### **Access the api server locally**
 
-1. ssh to a control plane node and modify the admin.conf
+1. ssh to a control plane node and modify the `/etc/kubernetes/admin.conf`
 
-    ```
-    vim /etc/kubernetes/admin.conf
-    ```
+    * Replace the `server` with `server: https://localhost:6443`
 
-2. replace the `server` with `server: https://localhost:6443`
+    * Add `insecure-skip-tls-verify: true`
 
-3. add `insecure-skip-tls-verify: true`
+    * Comment out `certificate-authority-data:`
 
-4. comment out `certificate-authority-data:`
-
-5. export the kubeconfig and ensure you can connect
+2. Export the kubeconfig and ensure you can connect
 
     ```bash
     export KUBECONFIG=/etc/kubernetes/admin.conf`
@@ -43,22 +39,19 @@ With CAPA today it is possible to create a cluster in another namespace with the
 
 ### **Make at least one node `Ready`**
 
-1. right now all endpoints are down due to nodes not being ready. this is problematic for coredns adn antrea in particular. let's get one control plane node back healthy. on the control plane node we logged into edit the `kubelet.conf`
+1. Right now all endpoints are down due to nodes not being ready. this is problematic for coredns adn antrea in particular. let's get one control plane node back healthy. on the control plane node we logged into edit the `/etc/kubernetes/kubelet.conf`
 
-    ```bash
-    vim /etc/kubernetes/kubelet.conf
-    ```
-2. replace the `server` with `server: https://localhost:6443`
+    * Replace the `server` with `server: https://localhost:6443`
 
-3. add `insecure-skip-tls-verify: true`
+    * Add `insecure-skip-tls-verify: true`
 
-4. comment out `certificate-authority-data:`
+    * Comment out `certificate-authority-data:`
 
-5. restart the kubelet `systemctl restart kubelet`
+    * Restart the kubelet `systemctl restart kubelet`
 
-6. `kubectl get nodes` and validate that the node is in a  ready state.
-7. After a few minutes most things should start scheduling themselves on the new node. The pods that did not restart on their own that were causing issues were core-dns,kube-proxy, and antrea.Those should be restart manually.
-8. (optional) tail the capa logs to see the load balancer start to reconcile
+2. `kubectl get nodes` and validate that the node is in a  ready state.
+3. After a few minutes most things should start scheduling themselves on the new node. The pods that did not restart on their own that were causing issues were core-dns,kube-proxy, and antrea.Those should be restart manually.
+4. (optional) tail the capa logs to see the load balancer start to reconcile
 
     ```bash
     kubectl logs -f -n capa-system deployments.apps/capa-controller-manager`
