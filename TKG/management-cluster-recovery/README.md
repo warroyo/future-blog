@@ -104,37 +104,43 @@ With CAPA today it is possible to create a cluster in another namespace with the
 
 5. Just as we did before we need new pods to pick up api server cache changes so  you will want to force restart pods like antrea, kube-proxy, core-dns , etc.
 
-## 5. Update capi settings for new LB DNS name
+### Update capi settings for new LB DNS name
 
-Update the control plane endpoint on the `awscluster` and `cluster` objects. To do this we need to disable the validatingwebhooks.we will back them up and then delete so we can apply later.
+1. Update the control plane endpoint on the `awscluster` and `cluster` objects. To do this we need to disable the validatingwebhooks. We will back them up and then delete so we can apply later.
 
-```
-kubectl get validatingwebhookconfigurations capa-validating-webhook-configuration -o yaml > capa-webhook && kubectl delete validatingwebhookconfigurations capa-validating-webhook-configuration
+    ```bash
+    kubectl get validatingwebhookconfigurations capa-validating-webhook-configuration -o yaml > capa-webhook && kubectl delete validatingwebhookconfigurations capa-validating-webhook-configuration
 
-kubectl get validatingwebhookconfigurations capi-validating-webhook-configuration -o yaml > capi-webhook && kubectl delete validatingwebhookconfigurations capi-validating-webhook-configuration
-```
+    kubectl get validatingwebhookconfigurations capi-validating-webhook-configuration -o yaml > capi-webhook && kubectl delete validatingwebhookconfigurations capi-validating-webhook-configuration
+    ```
 
-edit the `spec.controlPlaneEndpoint.host` field on both `awscluster` and `cluster` to have the new endpoint
+2. Edit the `spec.controlPlaneEndpoint.host` field on both `awscluster` and `cluster` to have the new endpoint
 
-re-apply your webhooks
+3. Re-apply your webhooks
 
-
-Update the following config maps and replace the old control plane name with the new one.
-
-```bash
-kubectl edit cm -n kube-system kubeadm-config
-kubectl edit cm -n kube-system kube-proxy
-kubectl edit cm -n kube-public cluster-info
-```
-
-edit the cluster kubeconfig secret that capi uses to talk to the mgmt cluster. you will need to decode teh secret, replace the endpoint and re-encode and save.
-
-`kubectl edit secret -n tkg-system <cluster-name>-kubeconfig`
-
-at this point things should start to reconcile on thier own, but we can use the commands in the next step to force it. 
+    ```bash
+    kubectl apply -f capi-webhook
+    kubectl apply -f capa-webhook
+    ```
 
 
-## 6. Roll all of the nodes to make sure everything is fresh
+4. Update the following config maps and replace the old control plane name with the new one.
+
+    ```bash
+    kubectl edit cm -n kube-system kubeadm-config
+    kubectl edit cm -n kube-system kube-proxy
+    kubectl edit cm -n kube-public cluster-info
+    ```
+
+5. Edit the cluster kubeconfig secret that capi uses to talk to the mgmt cluster. You will need to decode teh secret, replace the endpoint and re-encode and save.
+
+    ```bash
+    kubectl edit secret -n <namespace> <cluster-name>-kubeconfig`
+    ```
+6. At this point things should start to reconcile on thier own, but we can use the commands in the next step to force it. 
+
+
+### Roll all of the nodes to make sure everything is fresh
 
 1. `kubectl patch kcp <clusternamekcp> -n namespace --type merge -p "{\"spec\":{\"rolloutAfter\":\"`date +'%Y-%m-%dT%TZ'`\"}}"`
    
