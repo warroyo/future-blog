@@ -11,6 +11,7 @@ metadata:
     kapp.k14s.io/delete-strategy: "orphan"
     kapp.k14s.io/versioned: ""
     kapp.k14s.io/versioned-keep-original: ""
+    kapp.k14s.io/update-strategy: skip
     kapp.k14s.io/num-versions: "10"
 
 #@overlay/match by=overlay.subset({"kind":"AWSCluster"}),expects="0+"
@@ -37,6 +38,7 @@ metadata:
     kapp.k14s.io/versioned: ""
     kapp.k14s.io/num-versions: "10"
     kapp.k14s.io/versioned-keep-original: ""
+    kapp.k14s.io/update-strategy: skip
 
 ---
 apiVersion: kapp.k14s.io/v1alpha1
