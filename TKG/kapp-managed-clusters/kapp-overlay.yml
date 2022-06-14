@@ -3,6 +3,36 @@
 
 #@ if data.values.KAPP_MANAGED:
 
+#! this will fix issues with autscaler cluster roles being shared between clusters which breaks kapp
+#@overlay/match by=overlay.subset({"kind":"ClusterRole", "metadata": {"name": "cluster-autoscaler-management"}}),expects="0+"
+---
+metadata:
+   #@overlay/match missing_ok=True
+   name: #@ data.values.CLUSTER_NAME + "-cluster-autoscaler-management-cr"
+
+#@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding", "metadata": {"name":  data.values.CLUSTER_NAME + "-autoscaler-management"}}),expects="0+"
+---
+roleRef:
+  #@overlay/match missing_ok=True
+  name: #@ data.values.CLUSTER_NAME + "-cluster-autoscaler-management-cr"
+
+#@overlay/match by=overlay.subset({"kind":"ClusterRole", "metadata": {"name": "cluster-autoscaler-workload"}}),expects="0+"
+---
+metadata:
+   #@overlay/match missing_ok=True
+   name: #@ data.values.CLUSTER_NAME + "-cluster-autoscaler-workload-cr"
+
+#@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding", "metadata": {"name":  data.values.CLUSTER_NAME + "-autoscaler-workload"}}),expects="0+"
+---
+roleRef:
+  #@overlay/match missing_ok=True
+  name: #@ data.values.CLUSTER_NAME + "-cluster-autoscaler-workload-cr"
+
+
+#! end of fix for autoscaler
+
+
+
 #@overlay/match by=overlay.subset({"kind":"AWSMachineTemplate"}),expects="0+"
 ---
 metadata:
