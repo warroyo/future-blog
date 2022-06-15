@@ -70,6 +70,11 @@ In order to clean up all of the resources properly you should use kapp for the d
 
 `kapp delete -a <cluster-name>` - this will output all of the resources and prompt for deletion
 
+
+### FAQ
+
+1. if your cluster was initially created without kapp and are seeing some lingering `machineTemplates` and `KubeadmConfigTemplates` that show up as "skipped" in the kapp output this is due to the original resources needing to exist for the initial onboarding to kapp. Once your cluster has been kapp managed and the machineDeployments are using versioned `machineTemplates` you can clean these up if you don't want to see  them in the output. they are harmless though. 
+
 ## Special Thanks
 
 Thanks to some of my coworkers who have done some great work using TKG and Kapp. This is possible due to their work and they did the heavy lifting on Kapp configuration used here. 
