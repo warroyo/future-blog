@@ -47,6 +47,21 @@ tanzu cluster create <cluster-name> -f <cluster-config-yaml> --dry-run | kapp de
 This will generate the cluster yaml and then send it to kapp which will handle the apply to the cluster using a customized set of rules to handle any issues with immutable objects etc. This same command can now be used for cluster creates as well as updates since this is declarative.
 
 
+### Using with Management CLusters
+
+You can manage Management clusters with kapp but it needs to be done after the initial creation. These steps assume you have already created a manangement cluster with `tanzu mc create...` and haave now swicthed into the kube context of that management cluster.
+
+*** NOTE: if you created the management cluster without providing an existing VPC you will need to update your cluster config yaml file to have the automatically created VPC info(id, subnets) in the config otherwise it will complain about a missing VPC ID. ***
+
+1. set your namespace in the cluster config, this will be `NAMESPACE: tkg-system` for management clusters
+2. set the environment variable `export _TKG_CLUSTER_FORCE_ROLE="management"`  this forces the cli to create the yaml for a mgmt cluster
+3. run the following command
+
+```
+tanzu cluster create <mgmt-cluster-name> -f <mgmt-cluster-config-yaml> --dry-run | kapp deploy --diff-changes  -a <mgmt-cluster-name> --wait=false -y  -f -
+
+```
+
 ### Deleting Clusters
 
 In order to clean up all of the resources properly you should use kapp for the delete as well.
