@@ -47,7 +47,7 @@ tanzu cluster create <cluster-name> -f <cluster-config-yaml> --dry-run | kapp de
 This will generate the cluster yaml and then send it to kapp which will handle the apply to the cluster using a customized set of rules to handle any issues with immutable objects etc. This same command can now be used for cluster creates as well as updates since this is declarative.
 
 
-### Using with Management CLusters
+### Using with Management Clusters
 
 You can manage Management clusters with kapp but it needs to be done after the initial creation. These steps assume you have already created a manangement cluster with `tanzu mc create...` and haave now swicthed into the kube context of that management cluster.
 
