@@ -51,7 +51,7 @@ This will generate the cluster yaml and then send it to kapp which will handle t
 
 You can manage Management clusters with kapp but it needs to be done after the initial creation. These steps assume you have already created a manangement cluster with `tanzu mc create...` and haave now swicthed into the kube context of that management cluster.
 
-*** NOTE: if you created the management cluster without providing an existing VPC you will need to update your cluster config yaml file to have the automatically created VPC info(id, subnets) in the config otherwise it will complain about a missing VPC ID. ***
+**NOTE: if you created the management cluster without providing an existing VPC you will need to update your cluster config yaml file to have the automatically created VPC info(id, subnets) in the config otherwise it will complain about a missing VPC ID.**
 
 1. set your namespace in the cluster config, this will be `NAMESPACE: tkg-system` for management clusters
 2. set the environment variable `export _TKG_CLUSTER_FORCE_ROLE="management"`  this forces the cli to create the yaml for a mgmt cluster
