@@ -3,6 +3,30 @@
 
 #@ if data.values.KAPP_MANAGED:
 
+
+#@ if data.values.TKG_CLUSTER_ROLE == "management":
+
+#@overlay/match by=overlay.subset({"kind":"Cluster"}),expects="0+"
+---
+metadata:
+  #@overlay/match missing_ok=True
+  annotations:
+    #@overlay/match missing_ok=True
+    TKGVERSION: #@ data.values.TKG_VERSION
+
+#@ end
+
+#! add namespace to controlplane and infra ref in the cluster
+#@overlay/match by=overlay.subset({"kind":"Cluster"}),expects="0+"
+---
+spec:
+  controlPlaneRef:
+    #@overlay/match missing_ok=True
+    namespace: #@ data.values.NAMESPACE
+  infrastructureRef:
+    #@overlay/match missing_ok=True
+    namespace: #@ data.values.NAMESPACE
+
 #! this will fix issues with autscaler cluster roles being shared between clusters which breaks kapp
 #@overlay/match by=overlay.subset({"kind":"ClusterRole", "metadata": {"name": "cluster-autoscaler-management"}}),expects="0+"
 ---
