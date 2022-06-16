@@ -132,3 +132,5 @@ We can now look in the VS logs to ensure it routed correctly.Click on the DNS vi
 
 <img src="images/2022-06-16-13-33-17.png" alt="drawing" width="400"/>
 <img src="images/2022-06-16-13-35-43.png" alt="drawing" width="400"/>
+
+you can now use the single vip that was created in AVI for DNS in your TKG environment.
