@@ -1,6 +1,6 @@
 # Routing DNS requests based on domain name
 
-Sometimes it is necessary to be able to resolve multiple domains that live on different DNS servers from a single linux server for example. Let's say I have a TKG cluster and I need to resolve both the domains `warroyo.com` as well as `h2o.vmware.com` but they are resolved by 2 different domain servers. When setting up DNS in TKG you can provide multiple DNS servers but if you put in two different DNS servers that don't respond with the same results you will end up with intermittent failures. Luckily we also deploy NSX-ALB(AVI) for Load Balancing in TKG and we can use it to do dynamic routing to different nameservers based on domain name. This allows us to have a single DNS server that then can respond properly to both domains.
+Sometimes it is necessary to be able to resolve multiple domains that live on different DNS servers from a single linux server. For example, let's say I have a TKG cluster and I need to resolve both the domains `warroyo.com` as well as `h2o.vmware.com` but they are resolved by 2 different domain servers. When setting up DNS in TKG you can provide multiple DNS servers but if you put in two different DNS servers that don't respond with the same results you will end up with intermittent failures. Luckily we also deploy NSX-ALB(AVI) for Load Balancing in TKG and we can use it to do dynamic routing to different nameservers based on domain name. This allows us to have a single DNS server that then can respond properly to both domains.
 
 
 
