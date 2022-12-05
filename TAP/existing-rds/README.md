@@ -118,7 +118,7 @@ subjects:
 EOF
 ```
 
-3. Create a secret template
+3. Create a secret template, replace the `EXISTING DB HERE` with an existing db in your RDS instance.
 
 ```bash
 cat <<'EOF'  | kubectl -n default apply -f - 
@@ -152,7 +152,7 @@ spec:
   stringData:
     type: mysql
     port: "$(.rds.status.endpoint.port)"
-    database: "$(.rds.spec.dbInstanceIdentifier)"
+    database: "EXISTING DB NAME"
     host: "$(.rds.status.endpoint.address)"
     username: "$(.rds.spec.masterUsername)"
   data:
