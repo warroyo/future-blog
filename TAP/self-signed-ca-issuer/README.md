@@ -62,7 +62,7 @@ At this point you should validate that your `ClusterIssuer` is in a `ready` stat
 
 ## Applying the issuer to CNRS
 
-### For TAP < 1.3
+### For TAP <= 1.3
 
 In TAP `1.3.x` and below the we need to use an overlay to apply the issuer. Follow these steps.
 
