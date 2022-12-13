@@ -17,7 +17,7 @@ To add this to a TAP install we will need to add some config the the TAP values 
 The first step is to create a secret with the overlay
 
 
-```yaml
+```bash
 cat <<'EOF'  | kubectl  apply -f -
 apiVersion: v1
 kind: Secret
