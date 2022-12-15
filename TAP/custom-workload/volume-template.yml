@@ -1,0 +1,117 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterConfigTemplate
+metadata:
+  annotations:
+    doc: |
+      This template consumes an input named config which contains a
+      PodTemplateSpec and returns a ConfigMap which contains a
+      "delivery.yml" which contains a manifests for a Kubernetes
+      Deployment which will run the templated pod, and a "service.yml"
+      Kubernetes Service to expose the pods on the network. This also supports 
+      a workload param that allows for adding volumes
+  name: volumes-template
+spec:
+  configPath: .data
+  healthRule:
+    alwaysHealthy: {}
+  params:
+  - default:
+    - containerPort: 8080
+      name: http
+      port: 8080
+    name: ports
+  ytt: |
+    #@ load("@ytt:data", "data")
+    #@ load("@ytt:yaml", "yaml")
+    #@ load("@ytt:struct","struct")
+    #@ load("@ytt:assert", "assert")
+    #@ load("@ytt:overlay", "overlay")
+
+    #@ def merge_labels(fixed_values):
+    #@   labels = {}
+    #@   if hasattr(data.values.workload.metadata, "labels"):
+    #@    labels.update(data.values.workload.metadata.labels)
+    #@   end
+    #@   labels.update(fixed_values)
+    #@  return labels
+    #@ end
+
+    #@ def intOrString(v):
+    #@   return v if type(v) == "int" else int(v.strip()) if v.strip().isdigit() else v
+    #@ end
+
+    #@ def merge_ports(ports_spec,containers):
+    #@   ports = {}
+    #@   for c in containers:
+    #@     for p in getattr(c,"ports", []):
+    #@       ports[p.containerPort] = {"targetPort": p.containerPort,"port": p.containerPort, "name": getattr(p, "name", str(p.containerPort))}
+    #@     end
+    #@   end
+    #@   for p in ports_spec:
+    #@     targetPort = getattr(p,"containerPort", p.port)
+    #@     type(targetPort) in ("string", "int") or fail("containerPort must be a string or int")
+    #@     targetPort = intOrString(targetPort)
+    #@    
+    #@     port = p.port
+    #@     type(port) in ("string", "int") or fail("port must be a string or int")
+    #@     port = int(port)
+    #@     ports[p.port] = {"targetPort": targetPort, "port": port, "name": getattr(p, "name", str(p.port))}
+    #@   end
+    #@  return ports.values()
+    #@ end
+
+    #@ def addVolumes():
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: workload
+        #@overlay/match missing_ok=True
+        volumeMounts: #@ data.values.params.volumes.volumeMounts
+      #@overlay/match missing_ok=True
+      volumes: #@ data.values.params.volumes.volumes
+
+    #@ end
+
+    #@ def delivery():
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: #@ data.values.workload.metadata.name
+      annotations:
+      kapp.k14s.io/update-strategy: "fallback-on-replace"
+      ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
+      labels: #@ merge_labels({ "app.kubernetes.io/component": "run","carto.run/workload-name": data.values.workload.metadata.name })
+    spec:
+      selector:
+        matchLabels: #@ data.values.config.metadata.labels
+      template: #@ overlay.apply(data.values.config,addVolumes())
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: #@ data.values.workload.metadata.name
+      labels: #@ merge_labels({ "app.kubernetes.io/component": "run", "carto.run/workload-name": data.values.workload.metadata.name })
+    spec:
+      selector: #@ data.values.config.metadata.labels
+      ports:
+      #@ hasattr(data.values.params, "ports") and len(data.values.params.ports) or assert.fail("one or more ports param must be provided.")
+      #@ declared_ports = {}
+      #@ if "ports" in data.values.params:
+      #@   declared_ports = data.values.params.ports
+      #@ else:
+      #@   declared_ports = struct.encode([{ "containerPort": 8080, "port": 8080, "name": "http"}])
+      #@ end
+      #@ for p in merge_ports(declared_ports, data.values.config.spec.containers):
+        - #@ p
+      #@ end
+    #@ end
+
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: #@ data.values.workload.metadata.name + "-server"
+      labels: #@ merge_labels({ "app.kubernetes.io/component": "config"})
+    data:
+      delivery.yml: #@ yaml.encode(delivery())
