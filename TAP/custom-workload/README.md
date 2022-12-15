@@ -5,7 +5,7 @@ This is going walk through creating a custom workload type in TAP. The use case 
 
 ## Create a new config template
 
-The config template will generate the deployment and service yaml. In this case we have taken the `server-template` and modified it to add the overlay defined in the `addVolumes` function that will inject volumes from the workload params. 
+The config template will generate the deployment and service yaml. In this case we have taken the `server-template` and modified it to add the overlay defined in the `addVolumes` function that will inject volumes from the workload params. the full template is located [here](./volume-template.yml)
 
 ```bash
 kubectl  apply -f volume-template.yml 
