@@ -38,6 +38,19 @@ This is only required temporarily, the version of pinniped packaged with TKG(1.5
 5. Copy the app ID and app secret or download the json provided.
 
 
+## Update the app to use the correct issuer url
+
+This is needed becuase the default settings on csp apps are not setup with CSP issuer url in the correct field. a flag has been added that can be enabled through the API to change this. this is required for CSP to be used as an OIDc provider for pinniped.
+
+1. follow the docs [here](https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-E2A3B1C1-E9AD-4B00-A6B6-88D31FCDDF7C.html) to get an auhtorization token to use in the api request. This is different than the token from the UI, you use the token from the UI to generate this API token.
+
+2. Issue the api request to csp to update the field. replace the orgid and oauthappid 
+
+```bash
+curl https://console.cloud.vmware.com/ccs/gateway/am/api/orgs/{orgId}/oauth-apps/{oauthAppId}  -d '{ "useCspIssuerUrl": "true" }' -H "Content-Type: application/json"
+```
+
+
 ## Setup the TKG management cluster with auth
 
 The docs for doing this can be found [here](https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.5/vmware-tanzu-kubernetes-grid-15/GUID-iam-configure-id-mgmt.html), this is a shortened version. Please refer to the docs for all options as well as for doing this on an existing management cluster.
