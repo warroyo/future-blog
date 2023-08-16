@@ -10,7 +10,7 @@ This will outline the process for setting up auth on the TKG management cluster 
 
 ## Set your default CSP org
 
-This is only required temporarily, the version of pinniped packaged with TKG(1.5.3 as of this post) does not yet support the required flag to set the org id from pinniped. For this reason we need to have our default org set in CSP so when we redirect for SSO it will go to the right org. The field needed can be found [here](https://github.com/vmware-tanzu/pinniped/blob/main/generated/1.23/README.adoc#oidcauthorizationconfig) `additionalAuthorizeParameters` and a field `orgLink` could be added. 
+**This is only required if you are using a version of TKG <= 2.2.** the version of pinniped packaged with older version of TKG  does not yet support the required flag to set the org id from pinniped. For this reason we need to have our default org set in CSP so when we redirect for SSO it will go to the right org.
 
 1. login to CSP and click on your name in the upper right corner to open the menu. You will see the "Default Organization" drop down, select the org that you will be creating the OAuth app in as your default org.
 
@@ -67,6 +67,8 @@ OIDC_IDENTITY_PROVIDER_ISSUER_URL: "https://console.cloud.vmware.com"
 OIDC_IDENTITY_PROVIDER_NAME: "csp"
 OIDC_IDENTITY_PROVIDER_SCOPES: "openid,group_names,groups,email"
 OIDC_IDENTITY_PROVIDER_USERNAME_CLAIM: "email"
+#set this if you are on TKG >= 2.3, this is the fix instead of setting the default org
+OIDC_IDENTITY_PROVIDER_ADDITIONAL_AUTHORIZE_PARAMS: "orgId=<your-org-id>"
 ```
 
 2. create your management cluster.
