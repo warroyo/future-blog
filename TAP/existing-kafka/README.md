@@ -22,11 +22,11 @@ metadata:
 type: Opaque
 stringData:
   type: kafka
-  BootstrapServers: b-3-public.accuriskafkademo.alvicg.c2.kafka.us-west-2.amazonaws.com:9196,b-1-public.accuriskafkademo.alvicg.c2.kafka.us-west-2.amazonaws.com:9196,b-2-public.accuriskafkademo.alvicg.c2.kafka.us-west-2.amazonaws.com:9196
+  BootstrapServers: comma,seperated,list
   SaslMechanism: "ScramSha512"
   SecurityProtocol: "SaslSsl"
-  SaslPassword: 'securekafka'
-  SaslUsername: 'accuris'
+  SaslPassword: 'password'
+  SaslUsername: 'username'
 
 EOF
 ```
